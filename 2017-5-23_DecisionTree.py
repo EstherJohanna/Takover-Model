@@ -1,9 +1,10 @@
 
+
 #input from GUI
-expert = 1
-gazeoff = 0 # always means headoff, too!
-longgaze = 1
-bodyTurned = 0
+expert = 0
+gazeoff = 1 # always means headoff, too!#hier geaendert
+longgaze = 0 
+bodyTurned = 1
 Lockout = 1
 dangerousScenario = 0
 perceivedUrgency = 0
@@ -31,7 +32,9 @@ def main():
     if gazeoff:  
         Sclass.situation.gazeOnRoad(currSituation)
         if longgaze:
-            Sclass.situation.turnSA(currSituation)            
+            Sclass.situation.turnSA(currSituation) 
+        if bodyTurned:
+            Sclass.situation.turnBody(currSituation)
     if not gazeoff:
         if not longgaze:#if the driver JUST started looking to the street (he does not need
 #to turn the head anymore, but needs to build up situation awareness)
