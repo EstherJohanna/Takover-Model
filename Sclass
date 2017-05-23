@@ -61,20 +61,20 @@ class situation(object):
          #tasks
         motorPrepHead1 = self.S.Task('motorPrepHead1', length = 1)#25
         motorInitHead1 = self.S.Task('motorInitHead1', length = 1)#5
-        moveHead1 = self.S.Task('moveHead1', length = 1)#60
+        self.moveHead1 = self.S.Task('moveHead1', length = 1)#60
         self.moveAttention2 = self.S.Task('moveAttention2', length = 1)#5
         eyeMovePrep1 = self.S.Task('eyeMovePrep1', length = 1)#25
         saccade1 = self.S.Task('saccade1', length = 1)#5
         self.encodeVisObject1 = self.S.Task('encodeVisObject1', length = 1)#9
         #order
         self.S += (self.moveAttention1 < motorPrepHead1, motorPrepHead1 <= motorInitHead1 , 
-        motorInitHead1 <= moveHead1, self.moveAttention2 <= eyeMovePrep1,
+        motorInitHead1 <= self.moveHead1, self.moveAttention2 <= eyeMovePrep1,
         eyeMovePrep1 <= saccade1, saccade1 <= self.encodeVisObject1,
         self.moveAttention1 < self.moveAttention2)#self.moveAttention1 < thoraxMotoPrep
         #resources for tasks
         motorPrepHead1 += Head
         motorInitHead1 += Head
-        moveHead1 += Head
+        self.moveHead1 += Head
         self.moveAttention2 += Procedural
         eyeMovePrep1 += Eyes
         saccade1 += Eyes
@@ -106,6 +106,17 @@ class situation(object):
 #unterschied SA und turnSA:
 #in SA he still needs to turn head (which is done by function gazeOnRoad) - in both he then builds up SA. 
 
+     def turnBody(self):
+         self.thoraxMotoPrep = self.S.Task('thoraxMotoPrep', length = 1) # 25
+         self.thoraxMotoIni = self.S.Task('thoraxIni', length = 1)
+         self.thoraxTurn = self.S.Task('thoraxTurn', length = 1)
+         self.S += (self.moveAttention1 < self.thoraxMotoPrep, 
+         self. thoraxMotoPrep <= self.thoraxMotoIni,
+         self.thoraxMotoIni <= self.thoraxTurn)
+         self.thoraxMotoPrep += Thorax
+         self.thoraxMotoIni += Thorax
+         self.thoraxTurn += Thorax
+         
          
      def SA(self):
          #tasks
@@ -129,8 +140,7 @@ class situation(object):
          self.moveAttention3 <= eyeMovePrep2,
          eyeMovePrep2 <= saccade2, saccade2 <= encodeVisObject2,
          self.moveAttention3 < moveAttention4, moveAttention4 <= eyeMovePrep3,
-         eyeMovePrep3 <= saccade3, saccade3 <= self.encodeVisObject3, 
-         self.encodeVisObject3 < self.checkNear)
+         eyeMovePrep3 <= saccade3, saccade3 <= self.encodeVisObject3)
          #resources for tasks
          self.moveAttention2 += Procedural
          eyeMovePrep1 += Eyes
@@ -301,6 +311,16 @@ class situation(object):
          self.moveAttention1 < self.checkNear)#, 
          #if hasattr(self, 'self.encodeVisObject1'):
          #    self.S += (self.encodeVisObject1 < self.checkNear)
+         if hasattr(self, 'encodeVisObject3'):
+             self.S += self.encodeVisObject3 < self.checkNear
+         if hasattr(self, 'moveHead1'):
+             self.S += self.moveHead1 < self.checkNear
+         if hasattr(self, 'thoraxTurn'):    
+             self.S += self.thoraxTurn < self.checkNear
+             if hasattr(self, 'encodeVisObject1'):
+                 self.S += self.thoraxTurn < self.encodeVisObject1
+         if hasattr(self, 'moveAttention2'):
+            self.S += self.moveAttention2 < self.checkNear
          #self.head2road < self.requSourr)
          
          #resources for task
@@ -330,5 +350,4 @@ class situation(object):
          self.encodeVisObject8 += Visual
          self.encodeVisObject9 += Visual
          self.encodeVisObject10 += Visual
-         
          
