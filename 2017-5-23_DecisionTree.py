@@ -1,16 +1,15 @@
 
-
 #input from GUI
 expert = 0
 gazeoff = 1 # always means headoff, too!#hier geaendert
-longgaze = 0 
+longgaze = 1 
 bodyTurned = 1
-Lockout = 1
+Lockout = 0
+handsOccupied = 1 
+distanceHands = 50
+feetOnPedals = 0
 dangerousScenario = 0
 perceivedUrgency = 0
-handsOccupied = 0
-distanceHands = 50
-feetOnPedals = 1
 
 from pyschedule import solvers, plotters    
 import Sclass
@@ -55,14 +54,12 @@ if __name__ == '__main__':
     
 Sclass.S.use_makespan_objective()
 print(Sclass.S)
-#solvers.mip.solve_bigm
 ###############################################################################
 # A small helper method to solve and plot a scenario
 def run(S) :
     if solvers.mip.solve(Sclass.S):
         
         plotters.matplotlib.plot(S,fig_size=(40,5))
-        #somehow print out the time
     else:
         print('no solution exists')
 run(Sclass.S)
