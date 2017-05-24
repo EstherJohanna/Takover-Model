@@ -1,6 +1,6 @@
 
 from pyschedule import Scenario
-S = Scenario('takeover', horizon=35) #a takeover takes 7sec (=700dezisekunden)
+S = Scenario('takeover', horizon=40) #a takeover takes 7sec (=700dezisekunden)
 
 #resources
 Procedural = S.Resource('ProceduralMemory')
@@ -155,7 +155,7 @@ class situation(object):
          saccade3 += Eyes
          self.encodeVisObject3 += Visual
          
-     def hands2wheel(self):   #check 
+     def hands2wheel(self):  
          #tasks
          self.requHands2Wheel = self.S.Task('requHands2Wheel', length = 1)#5
          self.handsMotoPrep3 = self.S.Task('handsMotoPrep3', length = 1)#25
@@ -163,7 +163,7 @@ class situation(object):
          self.towheel = self.S.Task('towheel', length = 1)#mit Fitt's law!
          #order
          self.S += (self.requHands2Wheel <= self.handsMotoPrep3, self.handsMotoPrep3 <= self.handsMotoInit,
-         self.handsMotoInit <= self.towheel, self.moveAttention1 < self.requHands2Wheel)
+         self.handsMotoInit < self.towheel, self.moveAttention1 < self.requHands2Wheel)
          
          
          
@@ -194,25 +194,27 @@ class situation(object):
          #order
          self.S += (self.moveAttention1 < self.requUnoccupyHands,
          self.requUnoccupyHands <= self.moveAttention5,
-         self.moveAttention5 < self.head2CoSeat,
+         self.moveAttention5 <= self.head2CoSeat,
          self.moveAttention5 < self.handsMotoPrep3,
          self.handsMotoPrep3 <= self.handsMotoInit,
          self.handsMotoInit <= self.drop,
+         self.drop <= self.towheel,
          self.drop < self.head2road,
          self.moveAttention5 < self.eyeMovePrep4,
          self.eyeMovePrep4 <= self.saccade4, 
          self.saccade4 <= self.encodeVisObject4,
-         self.saccade4 < self.head2road,
+         self.saccade4 < self.head2road,#
          self.moveAttention5 < self.moveAttention6,
-         self.moveAttention6 <= self.requHands2Wheel,
+         self.moveAttention6 < self.requHands2Wheel,
          self.eyeMovePrep5 <= self.saccade5,
          self.saccade5 <= self.encodeVisObject5,
-         self.requHands2Wheel <= self.requUnoccupyHands,
          self.moveAttention6 < self.head2road,
-         self.moveAttention6 < self.eyeMovePrep5)
+         self.moveAttention6 < self.eyeMovePrep5,
+         self.head2CoSeat <= self.towheel)
+         
          #self.head2road < self.checkNear)
          #self.encodeVisObject5 < self.saccadeNear
-         
+         #self.requHands2Wheel <= self.requUnoccupyHands
          #self.drop <= self.towheel,
          #self.head2CoSeat < self.head2road, 
          #self.head2road < self.encodeVisObject5)
@@ -325,6 +327,8 @@ class situation(object):
             self.S += self.encodeVisObject3 < self.checkNear
          if hasattr(self, 'requHands2Wheel'):
             self.S += self.requHands2Wheel < self.checkNear
+         
+            
          #self.head2road < self.requSourr)
          
          #resources for task
