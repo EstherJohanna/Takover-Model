@@ -21,36 +21,35 @@ class situation(object):
         return 
 ###############################################################################
 #functions for all blocks
-     def start(self):    
-        attendAural = self.S.Task('attendAural', length = 1)#5
-        self.requestMeaningSound = self.S.Task('requestMeaningSound', length = 1)#5
-        self.encodeSound = self.S.Task('encodeSound', length = 1)#10
-        self.changeGoal = self.S.Task('changeGoal', length = 1)#5
-        self.moveAttention1 = self.S.Task('moveAttention', length = 1)#5
-        #order for tasks that always need to be done:
-        self.S += (attendAural <= self.encodeSound,
-        self.changeGoal < self.moveAttention1)
-        #resources for tasks that always need to be done:
-        attendAural += Procedural
-        self.encodeSound += Aural
-        self.requestMeaningSound += Procedural
-        self.changeGoal+= Procedural
-        self.moveAttention1+= Procedural      
-        return
+
  
      def exp(self):
-         self.meaningSound = self.S.Task('meaningSound', length = 1)#10
+         self.encodeSound = self.S.Task('encodeSound', length = 1)#10
          return
          
      def nov(self):
-         self.meaningSound = self.S.Task('meaningSound', length = 1)#50
+         self.encodeSound = self.S.Task('encodeSound', length = 1)#50
          return
     
-     def meaning(self):
+     def start(self):
+        self.attendAural = self.S.Task('attendAural', length = 1)#5
+        self.requestMeaningSound = self.S.Task('requestMeaningSound', length = 1)#5
+        self.meaningSound = self.S.Task('meaningSound', length = 1)#10
+        self.changeGoal = self.S.Task('changeGoal', length = 1)#5
+        self.moveAttention1 = self.S.Task('moveAttention', length = 1)#5
+        #resources for tasks that always need to be done:
+        self.attendAural += Procedural
+        self.requestMeaningSound += Procedural
+        self.changeGoal+= Procedural
+        self.moveAttention1+= Procedural 
         self.S += (self.requestMeaningSound < self.meaningSound, self.meaningSound <= self.changeGoal,
         self.encodeSound <= self.requestMeaningSound,
-        self.requestMeaningSound <= self.meaningSound, self.meaningSound < self.changeGoal)
+        self.requestMeaningSound <= self.meaningSound, 
+        self.meaningSound < self.changeGoal,
+        self.attendAural <= self.encodeSound,
+        self.changeGoal < self.moveAttention1)
         self.meaningSound += Declarative
+        self.encodeSound += Aural
         return 
         
      def lockout(self):#heck
