@@ -1,137 +1,144 @@
+import math
 
-from pyschedule import Scenario
-S = Scenario('takeover', horizon=40) #a takeover takes 7sec (=700dezisekunden)
-
-#resources
-Procedural = S.Resource('ProceduralMemory')
-Working = S.Resource('WorkingMemory')
-Declarative = S.Resource('DeclarativeMemory')
-Visual = S.Resource('Visual')
-Aural = S.Resource('Aural')
-Head = S.Resource('Head')
-Hand = S.Resource('Hand')
-Eyes = S.Resource('Eyes')
-Feet = S.Resource('Feet')
-Thorax = S.Resource('Thorax')
 
 class situation(object):
     
-     def __init__(self):
+     def __init__(self, dangerous, S, distanceHands, drivingSpeed):
         self.S = S
+        self.dangerous = dangerous
+        self.distanceHands = distanceHands
+        self.drivingSpeed = drivingSpeed
         return 
+
+        #resources
+     def resources(self):
+        self.Procedural = self.S.Resource('ProceduralMemory')
+        self.Working = self.S.Resource('WorkingMemory')
+        self.Declarative = self.S.Resource('DeclarativeMemory')
+        self.Visual = self.S.Resource('Visual')
+        self.Aural = self.S.Resource('Aural')
+        self.Head = self.S.Resource('Head')
+        self.Hand = self.S.Resource('Hand')
+        self.Eyes = self.S.Resource('Eyes')
+        self.Feet = self.S.Resource('Feet')
+        self.Thorax = self.S.Resource('Thorax')
+
 ###############################################################################
 #functions for all blocks
 
- 
      def exp(self):
-         self.encodeSound = self.S.Task('encodeSound', length = 1)#10
+         self.encodeSound = self.S.Task('encodeSound', length = 100)#10
          return
          
      def nov(self):
-         self.encodeSound = self.S.Task('encodeSound', length = 1)#50
+         self.encodeSound = self.S.Task('encodeSound', length = 500)#50
          return
     
      def start(self):
-        self.attendAural = self.S.Task('attendAural', length = 1)#5
-        self.requestMeaningSound = self.S.Task('requestMeaningSound', length = 1)#5
-        self.meaningSound = self.S.Task('meaningSound', length = 1)#10
-        self.changeGoal = self.S.Task('changeGoal', length = 1)#5
-        self.moveAttention1 = self.S.Task('moveAttention', length = 1)#5
-        #resources for tasks that always need to be done:
-        self.attendAural += Procedural
-        self.requestMeaningSound += Procedural
-        self.changeGoal+= Procedural
-        self.moveAttention1+= Procedural 
+        self.attendAural = self.S.Task('attendAural', length = 50)#5
+        self.requestMeaningSound = self.S.Task('requestMeaningSound', length = 50)#5
+        self.meaningSound = self.S.Task('meaningSound', length = 100)#10
+        self.changeGoal = self.S.Task('changeGoal', length = 50)#5
+        self.moveAttention1 = self.S.Task('moveAttention', length = 50)#5
+
+        self.attendAural += self.Procedural
+        self.requestMeaningSound += self.Procedural
+        self.changeGoal+= self.Procedural
+        self.moveAttention1+= self.Procedural 
         self.S += (self.requestMeaningSound < self.meaningSound, self.meaningSound <= self.changeGoal,
         self.encodeSound <= self.requestMeaningSound,
         self.requestMeaningSound <= self.meaningSound, 
         self.meaningSound < self.changeGoal,
         self.attendAural <= self.encodeSound,
         self.changeGoal < self.moveAttention1)
-        self.meaningSound += Declarative
-        self.encodeSound += Aural
+        self.meaningSound += self.Declarative
+        self.encodeSound += self.Aural
         return 
         
      def lockout(self):#heck
-         self.quitNDRT = self.S.Task('quitNDRT', length = 1)#5
+         self.quitNDRT = self.S.Task('quitNDRT', length = 50)#5
          self.S += self.changeGoal < self.quitNDRT, self.quitNDRT < self.moveAttention1
-         self.quitNDRT += Procedural
+         self.quitNDRT += self.Procedural
         
      def gazeOnRoad(self):#check
          #tasks
-        motorPrepHead1 = self.S.Task('motorPrepHead1', length = 1)#25
-        motorInitHead1 = self.S.Task('motorInitHead1', length = 1)#5
-        self.moveHead1 = self.S.Task('moveHead1', length = 1)#60
-        self.moveAttention2 = self.S.Task('moveAttention2', length = 1)#5
-        eyeMovePrep1 = self.S.Task('eyeMovePrep1', length = 1)#25
-        saccade1 = self.S.Task('saccade1', length = 1)#5
-        self.encodeVisObject1 = self.S.Task('encodeVisObject1', length = 1)#9
+        motorPrepHead1 = self.S.Task('motorPrepHead1', length = 250)#25
+        motorInitHead1 = self.S.Task('motorInitHead1', length = 50)#5
+        self.moveHead1 = self.S.Task('moveHead1', length = 50)#60
+        self.moveAttention2 = self.S.Task('moveAttention2', length = 50)#5
+        eyeMovePrep1 = self.S.Task('eyeMovePrep1', length = 250)#25
+        saccade1 = self.S.Task('saccade1', length = 50)#5
+        self.encodeVisObject1 = self.S.Task('encodeVisObject1', length = 90)#9
         #order
         self.S += (self.moveAttention1 < motorPrepHead1, motorPrepHead1 <= motorInitHead1 , 
         motorInitHead1 <= self.moveHead1, self.moveAttention2 <= eyeMovePrep1,
         eyeMovePrep1 <= saccade1, saccade1 <= self.encodeVisObject1,
         self.moveAttention1 < self.moveAttention2)#self.moveAttention1 < thoraxMotoPrep
         #resources for tasks
-        motorPrepHead1 += Head
-        motorInitHead1 += Head
-        self.moveHead1 += Head
-        self.moveAttention2 += Procedural
-        eyeMovePrep1 += Eyes
-        saccade1 += Eyes
-        self.encodeVisObject1 += Visual
+        motorPrepHead1 += self.Head
+        motorInitHead1 += self.Head
+        self.moveHead1 += self.Head
+        self.moveAttention2 += self.Procedural
+        eyeMovePrep1 += self.Eyes
+        saccade1 += self.Eyes
+        self.encodeVisObject1 += self.Visual
         
      def turnSA(self): #check
-         self.moveAttention3 = self.S.Task('moveAttention3', length = 1)#5
-         eyeMovePrep2 = self.S.Task('eyeMovePrep2', length = 1)#25
-         saccade2 = self.S.Task('saccade2', length = 1)#5
-         encodeVisObject2 = self.S.Task('encodeVisObject2', length = 1)#9
-         self.moveAttention4 = self.S.Task('moveAttention4', length = 1)#5
-         eyeMovePrep3 = self.S.Task('eyeMovePrep3', length = 1)#25
-         saccade3 = self.S.Task('saccade3', length = 1)#5
-         self.encodeVisObject3 = self.S.Task('encodeVisObject3', length = 1)#9
+         self.moveAttention3 = self.S.Task('moveAttention3', length = 50)#5
+         eyeMovePrep2 = self.S.Task('eyeMovePrep2', length = 250)#25
+         saccade2 = self.S.Task('saccade2', length = 50)#5
+         encodeVisObject2 = self.S.Task('encodeVisObject2', length = 90)#9
+         self.moveAttention4 = self.S.Task('moveAttention4', length = 50)#5
+         eyeMovePrep3 = self.S.Task('eyeMovePrep3', length = 250)#25
+         saccade3 = self.S.Task('saccade3', length = 50)#5
+         self.encodeVisObject3 = self.S.Task('encodeVisObject3', length = 90)#9
+         
          self.S += (self.moveAttention2 < self.moveAttention3, self.moveAttention3 <= eyeMovePrep2,
          eyeMovePrep2 <= saccade2, saccade2 <= encodeVisObject2,
          self.moveAttention3 < self.moveAttention4, self.moveAttention4 <= eyeMovePrep3,
          eyeMovePrep3 <= saccade3, saccade3 <= self.encodeVisObject3,
          self.moveHead1 < eyeMovePrep2)
-         self.moveAttention3 += Procedural
-         eyeMovePrep2 += Eyes
-         saccade2 += Eyes
-         encodeVisObject2 += Visual
-         self.moveAttention4 += Procedural
-         eyeMovePrep3 += Eyes
-         saccade3 += Eyes
-         self.encodeVisObject3 += Visual
+         
+         self.moveAttention3 += self.Procedural
+         eyeMovePrep2 += self.Eyes
+         saccade2 += self.Eyes
+         encodeVisObject2 += self.Visual
+         self.moveAttention4 += self.Procedural
+         eyeMovePrep3 += self.Eyes
+         saccade3 += self.Eyes
+         self.encodeVisObject3 += self.Visual
 
 #unterschied SA und turnSA:
 #in SA he still needs to turn head (which is done by function gazeOnRoad) - in both he then builds up SA. 
 
      def turnBody(self):
-         self.thoraxMotoPrep = self.S.Task('thoraxMotoPrep', length = 1) # 25
-         self.thoraxMotoIni = self.S.Task('thoraxIni', length = 1)
-         self.thoraxTurn = self.S.Task('thoraxTurn', length = 1)
+         self.thoraxMotoPrep = self.S.Task('thoraxMotoPrep', length = 250) # 25
+         self.thoraxMotoIni = self.S.Task('thoraxIni', length = 50)
+         self.thoraxTurn = self.S.Task('thoraxTurn', length = 1000)
+         
          self.S += (self.moveAttention1 < self.thoraxMotoPrep, 
          self. thoraxMotoPrep <= self.thoraxMotoIni,
          self.thoraxMotoIni <= self.thoraxTurn)
-         self.thoraxMotoPrep += Thorax
-         self.thoraxMotoIni += Thorax
-         self.thoraxTurn += Thorax
+         
+         self.thoraxMotoPrep += self.Thorax
+         self.thoraxMotoIni += self.Thorax
+         self.thoraxTurn += self.Thorax
          
          
      def SA(self):
          #tasks
-         self.moveAttention2 = self.S.Task('moveAttention2', length = 1)#5
-         eyeMovePrep1 = self.S.Task('eyeMovePrep1', length = 1)#25
-         saccade1 = self.S.Task('saccade1', length = 1)#5
-         encodeVisObject1 = self.S.Task('encodeVisObject1', length = 1)#9
-         self.moveAttention3 = self.S.Task('moveAttention3', length = 1)#5
-         eyeMovePrep2 = self.S.Task('eyeMovePrep2', length = 1)#25
-         saccade2 = self.S.Task('saccade2', length = 1)#5
-         encodeVisObject2 = self.S.Task('encodeVisObject2', length = 1)#9
-         moveAttention4 = self.S.Task('moveAttention4', length = 1)#5
-         eyeMovePrep3 = self.S.Task('eyeMovePrep3', length = 1)#25?
-         saccade3 = self.S.Task('saccade3', length = 1)#5
-         self.encodeVisObject3 = self.S.Task('encodeVisObject3', length = 1)#9
+         self.moveAttention2 = self.S.Task('moveAttention2', length = 50)#5
+         eyeMovePrep1 = self.S.Task('eyeMovePrep1', length = 250)#25
+         saccade1 = self.S.Task('saccade1', length = 50)#5
+         encodeVisObject1 = self.S.Task('encodeVisObject1', length = 90)#9
+         self.moveAttention3 = self.S.Task('moveAttention3', length = 50)#5
+         eyeMovePrep2 = self.S.Task('eyeMovePrep2', length = 250)#25
+         saccade2 = self.S.Task('saccade2', length = 50)#5
+         encodeVisObject2 = self.S.Task('encodeVisObject2', length = 90)#9
+         moveAttention4 = self.S.Task('moveAttention4', length = 50)#5
+         eyeMovePrep3 = self.S.Task('eyeMovePrep3', length = 250)#25?
+         saccade3 = self.S.Task('saccade3', length = 50)#5
+         self.encodeVisObject3 = self.S.Task('encodeVisObject3', length = 90)#9
          #order
          self.S += (self.moveAttention2 <= eyeMovePrep1,
          eyeMovePrep1 <= saccade1, saccade1 <= encodeVisObject1,
@@ -142,25 +149,28 @@ class situation(object):
          self.moveAttention3 < moveAttention4, moveAttention4 <= eyeMovePrep3,
          eyeMovePrep3 <= saccade3, saccade3 <= self.encodeVisObject3)
          #resources for tasks
-         self.moveAttention2 += Procedural
-         eyeMovePrep1 += Eyes
-         saccade1 += Eyes
-         encodeVisObject1 += Visual
-         self.moveAttention3 += Procedural
-         eyeMovePrep2 += Eyes
-         saccade2 += Eyes
-         encodeVisObject2 += Visual
-         moveAttention4 += Procedural
-         eyeMovePrep3 += Eyes
-         saccade3 += Eyes
-         self.encodeVisObject3 += Visual
+         self.moveAttention2 += self.Procedural
+         eyeMovePrep1 += self.Eyes
+         saccade1 += self.Eyes
+         encodeVisObject1 += self.Visual
+         self.moveAttention3 += self.Procedural
+         eyeMovePrep2 += self.Eyes
+         saccade2 += self.Eyes
+         encodeVisObject2 += self.Visual
+         moveAttention4 += self.Procedural
+         eyeMovePrep3 += self.Eyes
+         saccade3 += self.Eyes
+         self.encodeVisObject3 += self.Visual
          
      def hands2wheel(self):  
          #tasks
-         self.requHands2Wheel = self.S.Task('requHands2Wheel', length = 1)#5
-         self.handsMotoPrep3 = self.S.Task('handsMotoPrep3', length = 1)#25
-         self.handsMotoInit = self.S.Task('handsMotoInit', length = 1)#5         
-         self.towheel = self.S.Task('towheel', length = 1)#mit Fitt's law!
+         self.requHands2Wheel = self.S.Task('requHands2Wheel', length = 50)#5
+         self.handsMotoPrep3 = self.S.Task('handsMotoPrep3', length = 250)#25
+         self.handsMotoInit = self.S.Task('handsMotoInit', length = 50)#5
+         if self.dangerous:
+             self.towheel = self.S.Task('towheel', length = int(100.0*math.log(((self.distanceHands/50.0)+0.5),2.0)))#mit Fitt's law!
+         else:
+             self.towheel = self.S.Task('towheel', length = int(100.0*math.log(((self.distanceHands/30.0)+0.5),2.0)))#mit Fitt's law!
          #order
          self.S += (self.requHands2Wheel <= self.handsMotoPrep3, self.handsMotoPrep3 <= self.handsMotoInit,
          self.handsMotoInit < self.towheel, self.moveAttention1 < self.requHands2Wheel)
@@ -169,48 +179,48 @@ class situation(object):
          
          #self.changeGoal < self.requHands2Wheel, self.quitNDRT < self.requHands2Wheel,
          #resources for tasks
-         self.requHands2Wheel += Procedural
-         self.handsMotoPrep3 += Hand
-         self.handsMotoInit += Hand
-         self.towheel += Hand
+         self.requHands2Wheel += self.Procedural
+         self.handsMotoPrep3 += self.Hand
+         self.handsMotoInit += self.Hand
+         self.towheel += self.Hand
          
          
              
          
-     def unoccupyHands(self):#check
+     def unoccupyHands(self):#check! not adapted to dangerous and not dangerous scenario yet!
          #tasks
-         self.requUnoccupyHands = self.S.Task('requUnoccupyHands', length = 1)#5
-         self.moveAttention5 = self.S.Task('moveAttention5', length = 1)#5
-         self.moveAttention6 = self.S.Task('moveAttention6', length = 1)#5
-         self.head2CoSeat = self.S.Task('head2CoSeat', length = 1)#60
-         self.head2road = self.S.Task('head2road', length =1)#60
-         self.drop = self.S.Task('drop', length = 1)#11
-         self.eyeMovePrep4 = self.S.Task('eyeMovePrep4', length = 1)#25?
-         self.saccade4 = self.S.Task('saccade4', length = 1)#5
-         self.eyeMovePrep5 = self.S.Task('eyeMovePrep5', length = 1)#25?
-         self.saccade5 = self.S.Task('saccade5', length = 1)#5
-         self.encodeVisObject4 = self.S.Task('encodeVisObject4', length = 1)#9
-         self.encodeVisObject5 = self.S.Task('encodeVisObject5', length = 1)#9
+         self.requUnoccupyHands = self.S.Task('requUnoccupyHands', length = 50)#5
+         self.moveAttention5 = self.S.Task('moveAttention5', length = 50)#5
+         self.moveAttention6 = self.S.Task('moveAttention6', length = 50)#5
+         self.head2CoSeat = self.S.Task('head2CoSeat', length = 600)#60
+         self.head2road = self.S.Task('head2road', length =600)#60
+         self.drop = self.S.Task('drop', length = 110)#11
+         self.eyeMovePrep4 = self.S.Task('eyeMovePrep4', length = 250)#25?
+         self.saccade4 = self.S.Task('saccade4', length = 50)#5
+         self.eyeMovePrep5 = self.S.Task('eyeMovePrep5', length = 250)#25?
+         self.saccade5 = self.S.Task('saccade5', length = 50)#5
+         self.encodeVisObject4 = self.S.Task('encodeVisObject4', length = 90)#9
+         self.encodeVisObject5 = self.S.Task('encodeVisObject5', length = 90)#9
          #order
          self.S += (self.moveAttention1 < self.requUnoccupyHands,
-         self.requUnoccupyHands <= self.moveAttention5,
-         self.moveAttention5 <= self.head2CoSeat,
-         self.moveAttention5 < self.handsMotoPrep3,
-         self.handsMotoPrep3 <= self.handsMotoInit,
-         self.handsMotoInit <= self.drop,
-         self.drop <= self.towheel,
-         self.drop < self.head2road,
-         self.moveAttention5 < self.eyeMovePrep4,
-         self.eyeMovePrep4 <= self.saccade4,
-         self.saccade4 <= self.encodeVisObject4,
-         self.saccade4 < self.head2road,
-         self.moveAttention5 < self.moveAttention6,
-         self.moveAttention6 < self.requHands2Wheel,
-         self.eyeMovePrep5 <= self.saccade5,
-         self.saccade5 <= self.encodeVisObject5,
-         self.moveAttention6 < self.head2road,
-         self.moveAttention6 < self.eyeMovePrep5,
-         self.moveHead1 < self.head2CoSeat)
+         #self.requUnoccupyHands <= self.moveAttention5,
+         #self.moveAttention5 <= self.head2CoSeat,
+         #self.moveAttention5 < self.handsMotoPrep3,
+         #self.handsMotoPrep3 <= self.handsMotoInit,
+         #self.handsMotoInit <= self.drop,
+         #self.drop <= self.towheel,
+         #self.drop < self.head2road,
+         #self.moveAttention5 < self.eyeMovePrep4,
+         #self.eyeMovePrep4 <= self.saccade4,
+         self.saccade4 <= self.encodeVisObject4)
+         #self.saccade4 < self.head2road)
+         #self.moveAttention5 < self.moveAttention6)
+         #self.moveAttention6 < self.requHands2Wheel)
+         #self.eyeMovePrep5 <= self.saccade5)
+         #self.saccade5 <= self.encodeVisObject5)
+         #self.moveAttention6 < self.head2road)
+         #self.moveAttention6 < self.eyeMovePrep5)
+         #self.moveHead1 < self.head2CoSeat)
          '''
          self.head2CoSeat < self.towheel,# war <= aber dann gehts nicht
          self.requHands2Wheel <= self.requUnoccupyHands,
@@ -219,99 +229,141 @@ class situation(object):
          '''
          
          #resources for tasks
-         self.requUnoccupyHands += Procedural
-         self.moveAttention5 += Procedural
-         self.moveAttention6 += Procedural
-         self.head2CoSeat += Head
-         self.head2road += Head
-         self.handsMotoPrep3 += Hand
-         self.handsMotoInit += Hand
-         self.drop += Hand
-         self.eyeMovePrep4 += Eyes
-         self.saccade4 += Eyes
-         self.encodeVisObject4 += Visual
-         self.eyeMovePrep5 += Eyes
-         self.saccade5 += Eyes
-         self.encodeVisObject5 += Visual
+         self.requUnoccupyHands += self.Procedural
+         self.moveAttention5 += self.Procedural
+         self.moveAttention6 += self.Procedural
+         self.head2CoSeat += self.Head
+         self.head2road += self.Head
+         self.handsMotoPrep3 += self.Hand
+         self.handsMotoInit += self.Hand
+         self.drop += self.Hand
+         self.eyeMovePrep4 += self.Eyes
+         self.saccade4 += self.Eyes
+         self.encodeVisObject4 += self.Visual
+         self.eyeMovePrep5 += self.Eyes
+         self.saccade5 += self.Eyes
+         self.encodeVisObject5 += self.Visual
          
                  
          
      def feet2pedal(self):#check
          #tasks
-         self.requMoveFeet = self.S.Task('requmoveFeet', length = 1)#5
-         self.feetMotoPrep = self.S.Task('feetMotoPrep', length = 1)#25
-         self.feetIni = self.S.Task('feetIni', length = 1)#5
-         self.moveFeet = self.S.Task('moveFeet', length = 1)#19
+         self.requMoveFeet = self.S.Task('requmoveFeet', length = 50)#5
+         self.feetMotoPrep = self.S.Task('feetMotoPrep', length = 250)#25
+         self.feetIni = self.S.Task('feetIni', length = 50)#5
+         self.moveFeet = self.S.Task('moveFeet', length = 190)#19
          #order
          self.S += (self.changeGoal < self.requMoveFeet, 
          self.requMoveFeet <= self.feetMotoPrep, self.feetMotoPrep <= self.feetIni, 
          self.feetIni <= self.moveFeet),
          #self.moveFeet < self.requButton)
          #resources for tasks
-         self.requMoveFeet += Procedural
-         self.feetMotoPrep += Feet
-         self.feetIni += Feet
-         self.moveFeet += Feet 
+         self.requMoveFeet += self.Procedural
+         self.feetMotoPrep += self.Feet
+         self.feetIni += self.Feet
+         self.moveFeet += self.Feet 
          
          
      def TO(self):
          #tasks
-         self.checkNear = self.S.Task('checkNear', length = 1)#5
-         self.checkFar = self.S.Task('checkFar', length = 1)#5
-         self.checkBack = self.S.Task('checkBack', length = 1)#5
-         self.checkSide = self.S.Task('checkSide', length = 1)#5
-         self.attendRoad2 = self.S.Task('attendRoad2', length = 1)#5
-         self.requSourr = self.S.Task('requSourr', length = 1)#5
-         self.requButton = self.S.Task('requButton', length = 1)#5
-         self.headBack = self.S.Task('headBack', length = 1)#58
-         self.headSide = self.S.Task('headSide', length = 1)#71
-         self.headRoad = self.S.Task('headRoad', length = 1)#58 ?
-         self.saccadeNear = self.S.Task('saccadeNear', length = 1)#5
-         self.saccadeFar = self.S.Task('saccadeFar', length = 1)#5
-         self.saccadeBack = self.S.Task('saccadeBack', length = 1)#5
-         self.saccadeSide = self.S.Task('saccadeSide', length = 1)#5
-         self.saccadeRoad = self.S.Task('saccadeRoad', length = 1)#5
-         self.handsPrep = self.S.Task('handsPrep', length = 1)#25
-         self.handsIni = self.S.Task('handsIni', length = 1)#5
-         self.press = self.S.Task('press', length = 1)#10
-         self.curvature = self.S.Task('curvature', length = 1)#20
-         self.back = self.S.Task('back', length = 1)#20
-         self.side = self.S.Task('side', length = 1)#20
-         self.encodeVisObject6 = self.S.Task('encodeVisObject6', length = 1)#9
-         self.encodeVisObject7 = self.S.Task('encodeVisObject7', length = 1)#9
-         self.encodeVisObject8 = self.S.Task('encodeVisObject8', length = 1)#9
-         self.encodeVisObject9 = self.S.Task('encodeVisObject9', length = 1)#9
-         self.encodeVisObject10 = self.S.Task('encodeVisObject10', length = 1)#9
+         self.checkNear = self.S.Task('checkNear', length = 50)#5
+         self.checkFar = self.S.Task('checkFar', length = 50)#5
+         self.saccadeNear = self.S.Task('saccadeNear', length = 50)#5
+         self.saccadeFar = self.S.Task('saccadeFar', length = 50)#5
+         self.curvature = self.S.Task('curvature', length = 200)#20
+         self.encodeVisObject6 = self.S.Task('encodeVisObject6', length = 90)#9
+         self.encodeVisObject7 = self.S.Task('encodeVisObject7', length = 90)#9
+         
          #order
          self.S += (self.checkNear <= self.saccadeNear,
          self.saccadeNear <= self.encodeVisObject6,
          self.checkNear < self.checkFar, self.checkFar <= self.saccadeFar,
          self.saccadeFar <= self.encodeVisObject7, 
          self.encodeVisObject7 <= self.curvature,
-         self.checkFar < self.checkBack,
-         self.checkBack <= self.headBack,
-         self.checkBack < self.saccadeBack,
-         self.headBack < self.checkSide,
-         self.saccadeBack <= self.encodeVisObject8,
-         self.encodeVisObject8 <= self.back,
-         self.saccadeBack < self.checkSide,
-         self.checkSide <= self.headSide,
-         self.checkSide < self.saccadeSide,
-         self.saccadeSide <= self.encodeVisObject9,
-         self.encodeVisObject9 <= self.side,
-         self.headSide < self.attendRoad2,
-         self.saccadeSide < self.attendRoad2,
-         self.attendRoad2 <= self.headRoad,
-         self.attendRoad2 < self.saccadeRoad, 
-         self.saccadeRoad <= self.encodeVisObject10,
-         self.encodeVisObject10 < self.requSourr, 
-         self.requSourr < self.requButton,
-         self.requButton < self.handsPrep, 
-         self.handsPrep <= self.handsIni,
-         self.handsIni <= self.press,
          self.moveAttention1 < self.checkNear)#, 
-         #if hasattr(self, 'self.encodeVisObject1'):
-         #    self.S += (self.encodeVisObject1 < self.checkNear)
+
+         #resources for task
+         self.checkNear += self.Procedural
+         self.checkFar += self.Procedural
+         self.saccadeNear += self.Eyes
+         self.saccadeFar += self.Eyes
+         self.curvature += self.Working
+         self.encodeVisObject6 += self.Visual
+         self.encodeVisObject7 += self.Visual
+         
+         if not self.dangerous:
+             self.requButton = self.S.Task('requButton', length = 50)#5
+             self.handsPrep = self.S.Task('handsPrep', length = 250)#25
+             self.handsIni = self.S.Task('handsIni', length = 50)#5
+             self.press = self.S.Task('press', length = 100)#10
+             
+             self.S += (self.requButton < self.handsPrep, 
+             self.handsPrep <= self.handsIni,
+             self.handsIni <= self.press,
+             self.curvature < self.requButton)
+         
+             self.requButton += self.Procedural
+             self.handsPrep += self.Hand
+             self.handsIni += self.Hand
+             self.press += self.Hand
+         
+         if self.dangerous:
+             self.saccadeBack = self.S.Task('saccadeBack', length = 50)#5
+             self.saccadeSide = self.S.Task('saccadeSide', length = 50)#5
+             self.saccadeRoad = self.S.Task('saccadeRoad', length = 50)#5
+             self.requSourr = self.S.Task('requSourr', length = 50)#5
+             self.checkBack = self.S.Task('checkBack', length = 50)#5
+             self.checkSide = self.S.Task('checkSide', length = 50)#5
+             self.attendRoad2 = self.S.Task('attendRoad2', length = 50)#5
+             self.headBack = self.S.Task('headBack', length = 580)#58
+             self.headSide = self.S.Task('headSide', length = 710)#71
+             self.headRoad = self.S.Task('headRoad', length = 580)#58 ?
+             self.back = self.S.Task('back', length = 200)#20
+             self.side = self.S.Task('side', length = 200)#20
+             self.encodeVisObject8 = self.S.Task('encodeVisObject8', length = 90)#9
+             self.encodeVisObject9 = self.S.Task('encodeVisObject9', length = 90)#9
+             self.encodeVisObject10 = self.S.Task('encodeVisObject10', length = 90)#9
+             self.brakeTime = self.S.Task('brakeTime', length = int(((self.drivingSpeed*0.278)/7.72)*1000))
+                                        
+             self.S += (self.checkFar < self.checkBack,  
+             self.saccadeRoad <= self.encodeVisObject10,
+             self.encodeVisObject10 < self.requSourr, 
+             self.attendRoad2 < self.saccadeRoad, 
+             self.attendRoad2 <= self.headRoad,
+             self.checkBack <= self.headBack,
+             self.checkBack < self.saccadeBack,
+             self.headBack < self.checkSide,
+             self.headBack < self.encodeVisObject8,
+             self.saccadeBack <= self.encodeVisObject8,
+             self.encodeVisObject8 <= self.back,
+             self.saccadeBack < self.checkSide,
+             self.checkSide <= self.headSide,
+             self.checkSide < self.saccadeSide,
+             self.saccadeSide <= self.encodeVisObject9,
+             self.encodeVisObject9 <= self.side,
+             self.headSide < self.attendRoad2,
+             self.headSide < self.encodeVisObject9,
+             self.saccadeSide < self.attendRoad2,
+             self.requSourr < self.brakeTime)
+         
+             self.requSourr += self.Procedural
+             self.checkBack += self.Procedural
+             self.checkSide += self.Procedural
+             self.headBack += self.Head
+             self.saccadeBack += self.Eyes
+             self.encodeVisObject8 += self.Visual
+             self.headSide += self.Head
+             self.back += self.Working
+             self.side += self.Working
+             self.saccadeSide += self.Eyes
+             self.encodeVisObject9 += self.Visual
+             self.headRoad += self.Head
+             self.attendRoad2 += self.Procedural
+             self.saccadeRoad += self.Eyes
+             self.encodeVisObject10 += self.Visual
+             self.brakeTime += self.Feet
+             
+             
          if hasattr(self, 'encodeVisObject3'):
              self.S += self.encodeVisObject3 < self.checkNear
          if hasattr(self, 'moveHead1'):
@@ -331,36 +383,10 @@ class situation(object):
             self.encodeVisObject5 < self.saccadeNear) 
          if hasattr(self, 'moveAttention4'):
              if hasattr(self, 'requUnoccupyHands'):
-                 self.S += self.moveAttention4 < self.requUnoccupyHands
-         
-            
-         #self.head2road < self.requSourr)
-         
-         #resources for task
-         self.checkNear += Procedural
-         self.checkFar += Procedural
-         self.checkBack += Procedural
-         self.checkSide += Procedural
-         self.attendRoad2 += Procedural
-         self.requSourr += Procedural
-         self.requButton += Procedural
-         self.headBack += Head
-         self.headSide += Head
-         self.headRoad += Head
-         self.saccadeNear += Eyes
-         self.saccadeFar += Eyes
-         self.saccadeBack += Eyes
-         self.saccadeSide += Eyes
-         self.saccadeRoad += Eyes
-         self.handsPrep += Hand
-         self.handsIni += Hand
-         self.press += Hand
-         self.curvature += Working
-         self.back += Working
-         self.side += Working
-         self.encodeVisObject6 += Visual
-         self.encodeVisObject7 += Visual
-         self.encodeVisObject8 += Visual
-         self.encodeVisObject9 += Visual
-         self.encodeVisObject10 += Visual
-         
+                 self.S += self.moveAttention4 < self.requUnoccupyHands      
+             
+             
+             
+             
+             
+             
