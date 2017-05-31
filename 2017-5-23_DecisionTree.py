@@ -1,23 +1,25 @@
+from pyschedule import solvers, plotters, Scenario    
+import Sclass
 
 #input from GUI
 expert = 0
-gazeoff = 1 # always means headoff, too!
+gazeoff = 0 # always means headoff, too!
 longgaze = 1 
-bodyTurned = 1
-Lockout = 0
-handsOccupied = 1
-distanceHands = 50
-feetOnPedals = 0
+bodyTurned = 0
+Lockout = 1
+handsOccupied = 0
+distanceHands = 0
+feetOnPedals = 1
 dangerousScenario = 0
-distanceToObstacle = 100 #in m
+drivingSpeed = 100 #in m
 perceivedUrgency = 0
+S = Scenario('takeover', horizon=4000)
 
-from pyschedule import solvers, plotters    
-import Sclass
 
 def main():
     #create instance of a situation
-    currSituation = Sclass.situation()
+    currSituation = Sclass.situation(dangerousScenario, S)
+    Sclass.situation.resources(currSituation)
     #decision tree
     if not dangerousScenario:
         if expert:
@@ -68,15 +70,15 @@ def main():
 if __name__ == '__main__':
     main()
     
-Sclass.S.use_makespan_objective()
-print(Sclass.S)
+S.use_makespan_objective()
+print(S)
 ###############################################################################
 # A small helper method to solve and plot a scenario
 def run(S) :
-    #ortools
-    if solvers.mip.solve(Sclass.S):
+    #ortools or mip before solve
+    if solvers.ortools.solve(S):
         
         plotters.matplotlib.plot(S,fig_size=(40,5))
     else:
         print('no solution exists')
-run(Sclass.S)
+run(S)
