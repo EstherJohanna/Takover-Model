@@ -3,11 +3,12 @@ import math
 
 class situation(object):
     
-     def __init__(self, dangerous, S, distanceHands, drivingSpeed):
+     def __init__(self, dangerous, S, distanceHands, drivingSpeed, perceivedUrgent):
         self.S = S
         self.dangerous = dangerous
         self.distanceHands = distanceHands
         self.drivingSpeed = drivingSpeed
+        self.perceivedUrgent = perceivedUrgent
         return 
 
         #resources
@@ -66,38 +67,43 @@ class situation(object):
         motorInitHead1 = self.S.Task('motorInitHead1', length = 50)#5
         self.moveHead1 = self.S.Task('moveHead1', length = 50)#60
         self.moveAttention2 = self.S.Task('moveAttention2', length = 50)#5
-        eyeMovePrep1 = self.S.Task('eyeMovePrep1', length = 250)#25
+        self.eyeMovePrep1 = self.S.Task('eyeMovePrep1', length = 250)#25
         saccade1 = self.S.Task('saccade1', length = 50)#5
         self.encodeVisObject1 = self.S.Task('encodeVisObject1', length = 90)#9
         #order
         self.S += (self.moveAttention1 < motorPrepHead1, motorPrepHead1 <= motorInitHead1 , 
-        motorInitHead1 <= self.moveHead1, self.moveAttention2 <= eyeMovePrep1,
-        eyeMovePrep1 <= saccade1, saccade1 <= self.encodeVisObject1,
+        motorInitHead1 <= self.moveHead1, self.moveAttention2 <= self.eyeMovePrep1,
+        self.eyeMovePrep1 <= saccade1, saccade1 <= self.encodeVisObject1,
         self.moveAttention1 < self.moveAttention2)#self.moveAttention1 < thoraxMotoPrep
         #resources for tasks
         motorPrepHead1 += self.Head
         motorInitHead1 += self.Head
         self.moveHead1 += self.Head
         self.moveAttention2 += self.Procedural
-        eyeMovePrep1 += self.Eyes
+        self.eyeMovePrep1 += self.Eyes
         saccade1 += self.Eyes
         self.encodeVisObject1 += self.Visual
         
      def turnSA(self): #check
-         self.moveAttention3 = self.S.Task('moveAttention3', length = 50)#5
+         if self.perceivedUrgent:
+             self.moveAttention3 = self.S.Task('moveAttention3', length = 50)#5
+             self.moveAttention4 = self.S.Task('moveAttention4', length = 50)#5
+         else:
+             self.moveAttention3 = self.S.Task('moveAttention3', length = 100)#5
+             self.moveAttention4 = self.S.Task('moveAttention4', length = 100)#5
          eyeMovePrep2 = self.S.Task('eyeMovePrep2', length = 250)#25
          saccade2 = self.S.Task('saccade2', length = 50)#5
          encodeVisObject2 = self.S.Task('encodeVisObject2', length = 90)#9
-         self.moveAttention4 = self.S.Task('moveAttention4', length = 50)#5
          eyeMovePrep3 = self.S.Task('eyeMovePrep3', length = 250)#25
          saccade3 = self.S.Task('saccade3', length = 50)#5
          self.encodeVisObject3 = self.S.Task('encodeVisObject3', length = 90)#9
          
          self.S += (self.moveAttention2 < self.moveAttention3, self.moveAttention3 <= eyeMovePrep2,
          eyeMovePrep2 <= saccade2, saccade2 <= encodeVisObject2,
+         eyeMovePrep2 < self.moveAttention4,
          self.moveAttention3 < self.moveAttention4, self.moveAttention4 <= eyeMovePrep3,
          eyeMovePrep3 <= saccade3, saccade3 <= self.encodeVisObject3,
-         self.moveHead1 < eyeMovePrep2)
+         self.moveHead1 < eyeMovePrep2, self.eyeMovePrep1 < self.moveAttention3)
          
          self.moveAttention3 += self.Procedural
          eyeMovePrep2 += self.Eyes
@@ -128,29 +134,35 @@ class situation(object):
      def SA(self):
          #tasks
          self.moveAttention2 = self.S.Task('moveAttention2', length = 50)#5
-         eyeMovePrep1 = self.S.Task('eyeMovePrep1', length = 250)#25
+         self.eyeMovePrep1 = self.S.Task('eyeMovePrep1', length = 250)#25
          saccade1 = self.S.Task('saccade1', length = 50)#5
          encodeVisObject1 = self.S.Task('encodeVisObject1', length = 90)#9
-         self.moveAttention3 = self.S.Task('moveAttention3', length = 50)#5
+         if self.perceivedUrgent:
+             self.moveAttention3 = self.S.Task('moveAttention3', length = 50)#5
+             moveAttention4 = self.S.Task('moveAttention4', length = 50)#5
+         else:
+             self.moveAttention3 = self.S.Task('moveAttention3', length = 100)#5
+             moveAttention4 = self.S.Task('moveAttention4', length = 100)#5
          eyeMovePrep2 = self.S.Task('eyeMovePrep2', length = 250)#25
          saccade2 = self.S.Task('saccade2', length = 50)#5
          encodeVisObject2 = self.S.Task('encodeVisObject2', length = 90)#9
-         moveAttention4 = self.S.Task('moveAttention4', length = 50)#5
+         
          eyeMovePrep3 = self.S.Task('eyeMovePrep3', length = 250)#25?
          saccade3 = self.S.Task('saccade3', length = 50)#5
          self.encodeVisObject3 = self.S.Task('encodeVisObject3', length = 90)#9
          #order
-         self.S += (self.moveAttention2 <= eyeMovePrep1,
-         eyeMovePrep1 <= saccade1, saccade1 <= encodeVisObject1,
-         
+         self.S += (self.moveAttention2 <= self.eyeMovePrep1,
+         self.eyeMovePrep1 <= saccade1, saccade1 <= encodeVisObject1,
+         self.eyeMovePrep1 < self.moveAttention3,
          self.moveAttention1 < self.moveAttention2, self.moveAttention2 < self.moveAttention3, 
          self.moveAttention3 <= eyeMovePrep2,
          eyeMovePrep2 <= saccade2, saccade2 <= encodeVisObject2,
+         eyeMovePrep2 < self.moveAttention4,
          self.moveAttention3 < moveAttention4, moveAttention4 <= eyeMovePrep3,
          eyeMovePrep3 <= saccade3, saccade3 <= self.encodeVisObject3)
          #resources for tasks
          self.moveAttention2 += self.Procedural
-         eyeMovePrep1 += self.Eyes
+         self.eyeMovePrep1 += self.Eyes
          saccade1 += self.Eyes
          encodeVisObject1 += self.Visual
          self.moveAttention3 += self.Procedural
@@ -266,8 +278,12 @@ class situation(object):
          
      def TO(self):
          #tasks
-         self.checkNear = self.S.Task('checkNear', length = 50)#5
-         self.checkFar = self.S.Task('checkFar', length = 50)#5
+         if self.perceivedUrgent:
+             self.checkNear = self.S.Task('checkNear', length = 50)#5
+             self.checkFar = self.S.Task('checkFar', length = 50)#5
+         else:
+             self.checkNear = self.S.Task('checkNear', length = 100)#5
+             self.checkFar = self.S.Task('checkFar', length = 100)#5
          self.saccadeNear = self.S.Task('saccadeNear', length = 50)#5
          self.saccadeFar = self.S.Task('saccadeFar', length = 50)#5
          self.curvature = self.S.Task('curvature', length = 200)#20
@@ -292,7 +308,10 @@ class situation(object):
          self.encodeVisObject7 += self.Visual
          
          if not self.dangerous:
-             self.requButton = self.S.Task('requButton', length = 50)#5
+             if self.perceivedUrgent:
+                 self.requButton = self.S.Task('requButton', length = 50)#5
+             else:
+                 self.requButton = self.S.Task('requButton', length = 100)#5
              self.handsPrep = self.S.Task('handsPrep', length = 250)#25
              self.handsIni = self.S.Task('handsIni', length = 50)#5
              self.press = self.S.Task('press', length = 100)#10
@@ -385,8 +404,4 @@ class situation(object):
              if hasattr(self, 'requUnoccupyHands'):
                  self.S += self.moveAttention4 < self.requUnoccupyHands      
              
-             
-             
-             
-             
-             
+         
