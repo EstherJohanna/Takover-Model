@@ -1,7 +1,7 @@
 from pyschedule import solvers, plotters, Scenario    
 import Sclass
 
-#input from GUI
+#ToDo: input from GUI
 expert = 1
 gazeoff = 1 # always means headoff, too!
 longgaze = 1 
@@ -10,15 +10,14 @@ Lockout = 0
 handsOccupied = 0#hier gibt es ein problem!
 distanceHands = 50
 feetOnPedals = 0
-dangerousScenario = 1
+dangerousScenario = 0
 drivingSpeed = 100 #in km/h
-perceivedUrgency = 0
+perceivedUrgent = 0
 S = Scenario('takeover', horizon=10000)
-
 
 def main():
     #create instance of a situation
-    currSituation = Sclass.situation(dangerousScenario, S, distanceHands, drivingSpeed)
+    currSituation = Sclass.situation(dangerousScenario, S, distanceHands, drivingSpeed, perceivedUrgent)
     Sclass.situation.resources(currSituation)
     
     #decision tree       
@@ -28,7 +27,7 @@ def main():
     else:
         Sclass.situation.exp(currSituation)
         
-    Sclass.situation.start(currSituation)####
+    Sclass.situation.start(currSituation)
     if not Lockout:
         if not dangerousScenario:
             Sclass.situation.lockout(currSituation)
@@ -50,24 +49,21 @@ def main():
             Sclass.situation.hands2wheel(currSituation)
     if not feetOnPedals:
         Sclass.situation.feet2pedal(currSituation) 
-    Sclass.situation.TO(currSituation)
-        
-#I expect the tone to be different = driver knows immediately it's dangerous
-        
+    Sclass.situation.TO(currSituation)        
     return
 
 if __name__ == '__main__':
     main()
     
-S.use_makespan_objective()
-print(S)
+#S.use_makespan_objective()
+#print(S)
 ###############################################################################
 # A small helper method to solve and plot a scenario
 def run(S) :
     #ortools or mip before solve
     if solvers.ortools.solve(S):
         
-        plotters.matplotlib.plot(S,fig_size=(100,5))
+        plotters.matplotlib.plot(S,fig_size=(150,5))
     else:
         print('no solution exists')
 run(S)
