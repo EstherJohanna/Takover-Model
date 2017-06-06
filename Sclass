@@ -215,39 +215,36 @@ class situation(object):
          self.encodeVisObject5 = self.S.Task('encodeVisObject5', length = 90)#9
          #order
          self.S += (self.moveAttention1 < self.requUnoccupyHands,
-         #self.requUnoccupyHands <= self.moveAttention5,
-         #self.moveAttention5 <= self.head2CoSeat,
-         #self.moveAttention5 < self.handsMotoPrep3,
-         #self.handsMotoPrep3 <= self.handsMotoInit,
-         #self.handsMotoInit <= self.drop,
-         #self.drop <= self.towheel,
-         #self.drop < self.head2road,
-         #self.moveAttention5 < self.eyeMovePrep4,
-         #self.eyeMovePrep4 <= self.saccade4,
-         self.saccade4 <= self.encodeVisObject4)
-         #self.saccade4 < self.head2road)
-         #self.moveAttention5 < self.moveAttention6)
-         #self.moveAttention6 < self.requHands2Wheel)
-         #self.eyeMovePrep5 <= self.saccade5)
-         #self.saccade5 <= self.encodeVisObject5)
-         #self.moveAttention6 < self.head2road)
-         #self.moveAttention6 < self.eyeMovePrep5)
-         #self.moveHead1 < self.head2CoSeat)
-         '''
+         self.requUnoccupyHands <= self.moveAttention5,
+         self.moveAttention5 <= self.head2CoSeat,
+         self.moveAttention5 < self.handsMotoPrep3,
+         self.handsMotoPrep3 <= self.handsMotoInit,
+         self.handsMotoInit <= self.drop,
+         self.drop <= self.towheel,
+         self.drop < self.head2road,
+         self.moveAttention5 < self.eyeMovePrep4,
+         self.eyeMovePrep4 <= self.saccade4,
+         self.saccade4 <= self.encodeVisObject4,
+         self.saccade4 < self.head2road,
+         self.moveAttention5 < self.moveAttention6,
+         self.moveAttention6 < self.requHands2Wheel,
+         self.eyeMovePrep5 <= self.saccade5,
+         self.saccade5 <= self.encodeVisObject5,
+         self.moveAttention6 < self.head2road,
+         self.moveAttention6 < self.eyeMovePrep5,
+         self.moveHead1 < self.head2CoSeat,
          self.head2CoSeat < self.towheel,# war <= aber dann gehts nicht
-         self.requHands2Wheel <= self.requUnoccupyHands,
-         self.head2CoSeat < self.head2road, 
-         self.head2road < self.encodeVisObject5)
-         '''
+         self.encodeVisObject3 < self.requUnoccupyHands,
+         self.head2CoSeat < self.encodeVisObject4,
+         self.saccade4 < self.eyeMovePrep5)
          
+
          #resources for tasks
          self.requUnoccupyHands += self.Procedural
          self.moveAttention5 += self.Procedural
          self.moveAttention6 += self.Procedural
          self.head2CoSeat += self.Head
          self.head2road += self.Head
-         self.handsMotoPrep3 += self.Hand
-         self.handsMotoInit += self.Hand
          self.drop += self.Hand
          self.eyeMovePrep4 += self.Eyes
          self.saccade4 += self.Eyes
@@ -398,8 +395,8 @@ class situation(object):
          if hasattr(self, 'requHands2Wheel'):
             self.S += self.requHands2Wheel < self.checkNear
          if hasattr(self, 'head2road'):   
-            self.S += (self.head2road < self.checkNear,
-            self.encodeVisObject5 < self.saccadeNear) 
+            self.S += (self.head2road < self.checkNear)
+            #self.encodeVisObject5 < self.saccadeNear) 
          if hasattr(self, 'moveAttention4'):
              if hasattr(self, 'requUnoccupyHands'):
                  self.S += self.moveAttention4 < self.requUnoccupyHands      
