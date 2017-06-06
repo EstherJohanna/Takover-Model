@@ -232,9 +232,7 @@ class situation(object):
          self.saccade5 <= self.encodeVisObject5,
          self.moveAttention6 < self.head2road,
          self.moveAttention6 < self.eyeMovePrep5,
-         self.moveHead1 < self.head2CoSeat,
          self.head2CoSeat < self.towheel,# war <= aber dann gehts nicht
-         self.encodeVisObject3 < self.requUnoccupyHands,
          self.head2CoSeat < self.encodeVisObject4,
          self.saccade4 < self.eyeMovePrep5)
          
@@ -381,9 +379,11 @@ class situation(object):
              
              
          if hasattr(self, 'encodeVisObject3'):
-             self.S += self.encodeVisObject3 < self.checkNear
+             self.S += self.encodeVisObject3 < self.checkNear 
+             if hasattr(self, 'requUnoccupyHands'):
+                 self.S += self.encodeVisObject3 < self.requUnoccupyHands
          if hasattr(self, 'moveHead1'):
-             self.S += self.moveHead1 < self.checkNear
+             self.S += self.moveHead1 < self.checkNear, self.moveHead1 < self.head2CoSeat
          if hasattr(self, 'thoraxTurn'):    
              self.S += self.thoraxTurn < self.checkNear
              if hasattr(self, 'encodeVisObject1'):
