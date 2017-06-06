@@ -7,13 +7,13 @@ gazeoff = 1 # always means headoff, too!
 longgaze = 1 
 bodyTurned = 1
 Lockout = 0
-handsOccupied = 0#hier gibt es ein problem!
+handsOccupied = 1
 distanceHands = 50
 feetOnPedals = 0
 dangerousScenario = 0
 drivingSpeed = 100 #in km/h
-perceivedUrgent = 0
-S = Scenario('takeover', horizon=10000)
+perceivedUrgent = 1
+S = Scenario('takeover', horizon=20000)
 
 def main():
     #create instance of a situation
