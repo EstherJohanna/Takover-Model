@@ -388,7 +388,9 @@ class situation(object):
              if hasattr(self, 'requUnoccupyHands'):
                  self.S += self.encodeVisObject3 < self.requUnoccupyHands
          if hasattr(self, 'moveHead1'):
-             self.S += self.moveHead1 < self.checkNear, self.moveHead1 < self.head2CoSeat
+             self.S += self.moveHead1 < self.checkNear 
+             if hasattr(self, 'head2CoSeat'):
+                 self.moveHead1 < self.head2CoSeat
          if hasattr(self, 'thoraxTurn'):    
              self.S += self.thoraxTurn < self.checkNear
              if hasattr(self, 'encodeVisObject1'):
