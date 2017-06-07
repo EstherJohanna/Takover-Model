@@ -60,9 +60,12 @@ class makeSchedule(object):
     ###############################################################################
     # A small helper method to solve and plot a scenario
     def run(self) :
-        #ortools or mip before solve
-        if solvers.ortools.solve(self.S):
+        
+        return solvers.ortools.solve(self.S)
+        #for plotting the substeps:
+        ##'ortools' or 'mip' before 'solve'
+        #if solvers.ortools.solve(self.S):
             
-            plotters.matplotlib.plot(self.S,fig_size=(150,5))
-        else:
-            print('no solution exists')
+        #    plotters.matplotlib.plot(self.S,fig_size=(150,5))
+        #else:
+        #    print('no solution exists')
