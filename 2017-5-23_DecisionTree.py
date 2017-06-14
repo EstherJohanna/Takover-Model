@@ -3,7 +3,7 @@ import Sclass
 
 class makeSchedule(object):
     
-    def inputs(self, expert, gazeoff, longgaze, bodyTurned, lockout, handsOccupied, distanceHands, feetOnPedals, dangerousScenario, drivingSpeed, perceivedUrgent, S):
+    def inputs(self, expert, gazeoff, longgaze, bodyTurned, lockout, handsOccupied, distanceHands, feetOnPedals, dangerousScenario, drivingSpeed, perceivedUrgent, mentalWL, traffic, S):
     #ToDo: input from GUI
         self.expert = expert
         self.gazeoff = gazeoff # always means headoff, too!
@@ -16,11 +16,13 @@ class makeSchedule(object):
         self.dangerousScenario = dangerousScenario
         self.drivingSpeed = drivingSpeed #in km/h
         self.perceivedUrgent = perceivedUrgent
+        self.mentalWL = mentalWL
+        self.traffic = traffic
         self.S = S
     
     def main(self):
         #create instance of a situation
-        currSituation = Sclass.situation(self.dangerousScenario, self.S, self.distanceHands, self.drivingSpeed, self.perceivedUrgent)
+        currSituation = Sclass.situation(self.dangerousScenario, self.S, self.distanceHands, self.drivingSpeed, self.perceivedUrgent, self.mentalWL, self.traffic)
         Sclass.situation.resources(currSituation)
         
         #decision tree       
@@ -60,12 +62,13 @@ class makeSchedule(object):
     ###############################################################################
     # A small helper method to solve and plot a scenario
     def run(self) :
+        #enable this one for using 'running manytimes':
+        #return solvers.ortools.solve(self.S)
         
-        return solvers.ortools.solve(self.S)
         #for plotting the substeps:
-        ##'ortools' or 'mip' before 'solve'
-        #if solvers.ortools.solve(self.S):
+        #'ortools' or 'mip' before 'solve'
+        if solvers.ortools.solve(self.S):
             
-        #    plotters.matplotlib.plot(self.S,fig_size=(150,5))
-        #else:
-        #    print('no solution exists')
+            plotters.matplotlib.plot(self.S,fig_size=(150,5))
+        else:
+            print('no solution exists')
