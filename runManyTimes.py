@@ -1,7 +1,6 @@
 
-
 import DecisionTree
-from pyschedule import Scenario
+from pyschedule import Scenario, plotters
 import numpy
 import matplotlib.pyplot as plt
 
@@ -26,18 +25,19 @@ a.append(1) #traffic: 1 no traffic, 2 medium traffic, 3 much traffic
 def main():
     #create instance of a situation
     thisOne = DecisionTree.makeSchedule()
-    
+    Sc = Scenario('takeover', horizon=20000)
+
     #inputs:(self, inputs, S)
-    DecisionTree.makeSchedule.inputs(thisOne, a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8],a[9],a[10], a[11], a[12], Scenario('takeover', horizon=20000))
+    DecisionTree.makeSchedule.inputs(thisOne, a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8],a[9],a[10], a[11], a[12], Sc)
     DecisionTree.makeSchedule.main(thisOne)
-    results.append(DecisionTree.makeSchedule.run(thisOne))
-    
+    DecisionTree.makeSchedule.run(thisOne)
+    results.append(plotters.matplotlib.plot(Sc,img_filename=None,resource_height=1.0,show_task_labels=True, color_prec_groups=False,hide_tasks=[],hide_resources=[],task_colors=dict(),fig_size=(15,5)))
 
 
 
 if __name__ == '__main__':
     i = 0
-    for i in range (0,1):
+    for i in range (0,100):
         main()
         i += 1
     #print results
