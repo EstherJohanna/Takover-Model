@@ -63,12 +63,13 @@ class makeSchedule(object):
     # A small helper method to solve and plot a scenario
     def run(self) :
         #enable this one for using 'running manytimes':
-        #return solvers.ortools.solve(self.S)
+        return solvers.ortools.solve(self.S)
         
         #for plotting the substeps:
         #'ortools' or 'mip' before 'solve'
-        if solvers.ortools.solve(self.S):
+        #if solvers.ortools.solve(self.S):
             
-            plotters.matplotlib.plot(self.S,fig_size=(150,5))
-        else:
-            print('no solution exists')
+            #plotters.matplotlib.plot(self.S,fig_size=(150,5))
+            #print solvers.ortools.solve(self.S)
+        #else:
+            #print('no solution exists')
