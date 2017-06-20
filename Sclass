@@ -30,7 +30,10 @@ class situation(object):
 #functions for all blocks
 
      def exp(self):
-         self.encodeSound = self.S.Task('encodeSound', length = int(numpy.random.normal(2000,10)))
+         if self.dangerous:
+             self.encodeSound = self.S.Task('encodeSound', length = int(numpy.random.normal(1000,10)))
+         else:
+             self.encodeSound = self.S.Task('encodeSound', length = int(numpy.random.normal(2000,10)))
          return
          
      def nov(self):
@@ -105,13 +108,13 @@ class situation(object):
          else:
              self.moveAttention3 = self.S.Task('moveAttention3', length = int(numpy.random.normal(100,10)))
              self.moveAttention4 = self.S.Task('moveAttention4', length = int(numpy.random.normal(100,10)))
-             if self.traffic is 2 or self.traffic is 3:
-                 self.moveAttention41 = self.S.Task('moveAttention41', length = int(numpy.random.normal(100,10)))
-                 self.moveAttention42 = self.S.Task('moveAttention42', length = int(numpy.random.normal(100,10)))
-                 self.moveAttention43 = self.S.Task('moveAttention43', length = int(numpy.random.normal(100,10)))
-                 if self.traffic is 3:
-                     self.moveAttention44 = self.S.Task('moveAttention44', length = int(numpy.random.normal(100,10)))
-         
+             #if self.traffic is 2 or self.traffic is 3:
+             #    self.moveAttention41 = self.S.Task('moveAttention41', length = int(numpy.random.normal(100,10)))
+             #    self.moveAttention42 = self.S.Task('moveAttention42', length = int(numpy.random.normal(100,10)))
+             #    self.moveAttention43 = self.S.Task('moveAttention43', length = int(numpy.random.normal(100,10)))
+             #    if self.traffic is 3:
+             #        self.moveAttention44 = self.S.Task('moveAttention44', length = int(numpy.random.normal(100,10)))
+            
          eyeMovePrep2 = self.S.Task('eyeMovePrep2', length = int(numpy.random.normal(135,13)))
          saccade2 = self.S.Task('saccade2', length = int(numpy.random.normal(80,8)))
          encodeVisObject2 = self.S.Task('encodeVisObject2', length = int(numpy.random.normal(90,9)))
@@ -135,60 +138,61 @@ class situation(object):
          saccade3 += self.Eyes
          self.encodeVisObject3 += self.Visual
          
-         if self.traffic is 2 or self.traffic is 3:
-             self.eyeMovePrep31 = self.S.Task('eyeMovePrep31', length = int(numpy.random.normal(135,13)))
-             self.eyeMovePrep32 = self.S.Task('eyeMovePrep32', length = int(numpy.random.normal(135,13)))
-             self.eyeMovePrep33 = self.S.Task('eyeMovePrep33', length = int(numpy.random.normal(135,13)))
-             self.saccade31 = self.S.Task('saccade31', length = int(numpy.random.normal(80,8)))
-             self.saccade32 = self.S.Task('saccade32', length = int(numpy.random.normal(80,8)))
-             self.saccade33 = self.S.Task('saccade33', length = int(numpy.random.normal(80,8)))
-             self.encodeVisObject31 = self.S.Task('encodeVisObject31', length = int(numpy.random.normal(85,9)))
-             self.encodeVisObject32 = self.S.Task('encodeVisObject32', length = int(numpy.random.normal(85,9)))
-             self.encodeVisObject33 = self.S.Task('encodeVisObject33', length = int(numpy.random.normal(85,9)))
-             self.S += (self.eyeMovePrep3 < self.moveAttention41,
-                        self.moveAttention4 < self.moveAttention41,
-                        self.moveAttention41 <= self.eyeMovePrep31,
-                        self.eyeMovePrep31 <= self.saccade31,
-                        self.saccade31 <= self.encodeVisObject31,
-                        
-                        self.eyeMovePrep31 < self.moveAttention42,
-                        self.moveAttention41 < self.moveAttention42,
-                        self.moveAttention42 <= self.eyeMovePrep32,
-                        self.eyeMovePrep32 <= self.saccade32,
-                        self.saccade32 <= self.encodeVisObject32,
-                        
-                        self.eyeMovePrep32 < self.moveAttention43,
-                        self.moveAttention42 < self.moveAttention43,
-                        self.moveAttention43 <= self.eyeMovePrep33,
-                        self.eyeMovePrep33 <= self.saccade33,
-                        self.saccade33 <= self.encodeVisObject33)
+         if self.perceivedUrgent:
+             if self.traffic is 2 or self.traffic is 3:
+                 self.eyeMovePrep31 = self.S.Task('eyeMovePrep31', length = int(numpy.random.normal(135,13)))
+                 self.eyeMovePrep32 = self.S.Task('eyeMovePrep32', length = int(numpy.random.normal(135,13)))
+                 self.eyeMovePrep33 = self.S.Task('eyeMovePrep33', length = int(numpy.random.normal(135,13)))
+                 self.saccade31 = self.S.Task('saccade31', length = int(numpy.random.normal(80,8)))
+                 self.saccade32 = self.S.Task('saccade32', length = int(numpy.random.normal(80,8)))
+                 self.saccade33 = self.S.Task('saccade33', length = int(numpy.random.normal(80,8)))
+                 self.encodeVisObject31 = self.S.Task('encodeVisObject31', length = int(numpy.random.normal(85,9)))
+                 self.encodeVisObject32 = self.S.Task('encodeVisObject32', length = int(numpy.random.normal(85,9)))
+                 self.encodeVisObject33 = self.S.Task('encodeVisObject33', length = int(numpy.random.normal(85,9)))
+                 self.S += (self.eyeMovePrep3 < self.moveAttention41,
+                            self.moveAttention4 < self.moveAttention41,
+                            self.moveAttention41 <= self.eyeMovePrep31,
+                            self.eyeMovePrep31 <= self.saccade31,
+                            self.saccade31 <= self.encodeVisObject31,
+                            
+                            self.eyeMovePrep31 < self.moveAttention42,
+                            self.moveAttention41 < self.moveAttention42,
+                            self.moveAttention42 <= self.eyeMovePrep32,
+                            self.eyeMovePrep32 <= self.saccade32,
+                            self.saccade32 <= self.encodeVisObject32,
+                            
+                            self.eyeMovePrep32 < self.moveAttention43,
+                            self.moveAttention42 < self.moveAttention43,
+                            self.moveAttention43 <= self.eyeMovePrep33,
+                            self.eyeMovePrep33 <= self.saccade33,
+                            self.saccade33 <= self.encodeVisObject33)
              
-             self.moveAttention41 += self.Procedural
-             self.moveAttention42 += self.Procedural
-             self.moveAttention43 += self.Procedural
-             self.eyeMovePrep31 += self.Eyes
-             self.eyeMovePrep32 += self.Eyes
-             self.eyeMovePrep33 += self.Eyes
-             self.saccade31 += self.Eyes
-             self.saccade32 += self.Eyes
-             self.saccade33 += self.Eyes
-             self.encodeVisObject31 += self.Visual
-             self.encodeVisObject32 += self.Visual
-             self.encodeVisObject33 += self.Visual
-             
-             if self.traffic is 3:
-                 self.eyeMovePrep34 = self.S.Task('eyeMovePrep34', length = int(numpy.random.normal(135,13)))
-                 self.saccade34 = self.S.Task('saccade34', length = int(numpy.random.normal(80,8)))
-                 self.encodeVisObject34 = self.S.Task('encodeVisObject34', length = int(numpy.random.normal(85,9)))
-                 self.S += (self.eyeMovePrep33 < self.moveAttention44,
-                        self.moveAttention43 < self.moveAttention44,
-                        self.moveAttention44 <= self.eyeMovePrep34,
-                        self.eyeMovePrep34 <= self.saccade34,
-                        self.saccade34 <= self.encodeVisObject34)
-                 self.moveAttention44 += self.Procedural
-                 self.eyeMovePrep34 += self.Eyes
-                 self.saccade34 += self.Eyes
-                 self.encodeVisObject34 += self.Visual
+                 self.moveAttention41 += self.Procedural
+                 self.moveAttention42 += self.Procedural
+                 self.moveAttention43 += self.Procedural
+                 self.eyeMovePrep31 += self.Eyes
+                 self.eyeMovePrep32 += self.Eyes
+                 self.eyeMovePrep33 += self.Eyes
+                 self.saccade31 += self.Eyes
+                 self.saccade32 += self.Eyes
+                 self.saccade33 += self.Eyes
+                 self.encodeVisObject31 += self.Visual
+                 self.encodeVisObject32 += self.Visual
+                 self.encodeVisObject33 += self.Visual
+                 
+                 if self.traffic is 3:
+                     self.eyeMovePrep34 = self.S.Task('eyeMovePrep34', length = int(numpy.random.normal(135,13)))
+                     self.saccade34 = self.S.Task('saccade34', length = int(numpy.random.normal(80,8)))
+                     self.encodeVisObject34 = self.S.Task('encodeVisObject34', length = int(numpy.random.normal(85,9)))
+                     self.S += (self.eyeMovePrep33 < self.moveAttention44,
+                            self.moveAttention43 < self.moveAttention44,
+                            self.moveAttention44 <= self.eyeMovePrep34,
+                            self.eyeMovePrep34 <= self.saccade34,
+                            self.saccade34 <= self.encodeVisObject34)
+                     self.moveAttention44 += self.Procedural
+                     self.eyeMovePrep34 += self.Eyes
+                     self.saccade34 += self.Eyes
+                     self.encodeVisObject34 += self.Visual
          
 #unterschied SA und turnSA:
 #in SA he still needs to turn head (which is done by function gazeOnRoad) - in both he then builds up SA. 
@@ -415,6 +419,7 @@ class situation(object):
              self.encodeVisObject9 = self.S.Task('encodeVisObject9', length = int(numpy.random.normal(85,9)))
              self.encodeVisObject10 = self.S.Task('encodeVisObject10', length = int(numpy.random.normal(85,9)))
              self.brakeTime = self.S.Task('brakeTime', length = int(((self.drivingSpeed*0.278)/7.72)*1000))
+             #self.brakeTime = self.S.Task('brakeTime', length = int(numpy.random.normal(100,10)))
                                         
              self.S += (self.checkFar < self.checkBack,  
              self.saccadeRoad <= self.encodeVisObject10,
