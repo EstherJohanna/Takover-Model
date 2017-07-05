@@ -35,10 +35,12 @@ class makeSchedule(object):
             Sclass.situation.exp(currSituation)
             
         Sclass.situation.start(currSituation)
+        
         if not self.lockout:
             if not self.dangerousScenario:
                 Sclass.situation.lockout(currSituation)
-        if self.gazeoff:  
+                    
+        if self.gazeoff: 
             Sclass.situation.gazeOnRoad(currSituation)
             if self.longgaze:
                 Sclass.situation.turnSA(currSituation) 
@@ -69,7 +71,7 @@ class makeSchedule(object):
         #'ortools' or 'mip' before 'solve'
         #if solvers.ortools.solve(self.S):
             
-            #plotters.matplotlib.plot(self.S,fig_size=(150,5))
+        #    plotters.matplotlib.plot(self.S,fig_size=(150,5))
             #print solvers.ortools.solve(self.S)
         #else:
             #print('no solution exists')
