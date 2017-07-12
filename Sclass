@@ -30,10 +30,7 @@ class situation(object):
 #functions for all blocks
 
      def exp(self):
-         if self.dangerous:
-             self.encodeSound = self.S.Task('encodeSound', length = 1000 )
-         else:
-             self.encodeSound = self.S.Task('encodeSound', length = 2000 )
+         self.encodeSound = self.S.Task('encodeSound', length = 50 )
          return
          
      def nov(self):
@@ -42,10 +39,10 @@ class situation(object):
     
      def start(self):
         self.attendAural = self.S.Task('attendAural', length = 50 )
-        self.requestMeaningSound = self.S.Task('requestMeaningSound', length = 50 )
-        self.meaningSound = self.S.Task('meaningSound', length = 100 )
+        self.requestMeaningSound = self.S.Task('requestMeaningSound', length = 0 )
+        self.meaningSound = self.S.Task('meaningSound', length = 0 )
         if self.mentalWL is 1:
-            self.changeGoal = self.S.Task('changeGoal', length = 50 )
+            self.changeGoal = self.S.Task('changeGoal', length = 0 )
         if self.mentalWL is 2:
             self.changeGoal = self.S.Task('changeGoal', length = 80 )
         if self.mentalWL is 3:
@@ -258,7 +255,7 @@ class situation(object):
          self.requHands2Wheel = self.S.Task('requHands2Wheel', length = 50 )
          self.handsMotoPrep3 = self.S.Task('handsMotoPrep3', length = 250 )
          self.handsMotoInit = self.S.Task('handsMotoInit', length = 50 )
-             self.towheel = self.S.Task('towheel', length = int(100.0*math.log(((self.distanceHands/10.0)+0.5),2.0)))#Fitt's law
+         self.towheel = self.S.Task('towheel', length = int(100.0*math.log(((self.distanceHands/10.0)+0.5),2.0)))#Fitt's law
          #order
          self.S += (self.requHands2Wheel <= self.handsMotoPrep3, self.handsMotoPrep3 <= self.handsMotoInit,
          self.handsMotoInit < self.towheel, self.moveAttention1 < self.requHands2Wheel)
@@ -285,9 +282,9 @@ class situation(object):
          self.head2CoSeat = self.S.Task('head2CoSeat', length = 600 )
          self.head2road = self.S.Task('head2road', length = 600 )
          if self.dangerous:
-             self.drop = self.S.Task('drop', length = 100*math.log(((60/20)+0.5),2))#Fitt's law
+             self.drop = self.S.Task('drop', length = int(100*math.log(((60/20)+0.5),2)))#Fitt's law
          else:
-             self.drop = self.S.Task('drop', length = 100*math.log(((60/40)+0.5),2))#Fitt's law
+             self.drop = self.S.Task('drop', length = int(100*math.log(((60/40)+0.5),2)))#Fitt's law
          self.eyeMovePrep4 = self.S.Task('eyeMovePrep4', length = 135 )
          self.saccade4 = self.S.Task('saccade4', length = 80 )
          self.eyeMovePrep5 = self.S.Task('eyeMovePrep5', length = 135 )
@@ -355,8 +352,8 @@ class situation(object):
      def TO(self):
          #tasks
          if self.perceivedUrgent:
-             self.checkNear = self.S.Task('checkNear', length = 80 )
-             self.checkFar = self.S.Task('checkFar', length = 80 )
+             self.checkNear = self.S.Task('checkNear', length = 50 )
+             self.checkFar = self.S.Task('checkFar', length = 50 )
          else:
              self.checkNear = self.S.Task('checkNear', length = 160 )
              self.checkFar = self.S.Task('checkFar', length = 160 )
