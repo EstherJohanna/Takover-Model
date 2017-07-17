@@ -1,4 +1,6 @@
 
+
+         
 import math
 from scipy.stats import gamma
 
@@ -43,12 +45,10 @@ class situation(object):
         self.attendAural = self.S.Task('attendAural', length = 50 )
         self.requestMeaningSound = self.S.Task('requestMeaningSound', length = 50 )
         self.meaningSound = self.S.Task('meaningSound', length = 100 )
-        if self.mentalWL is 1:
+        if self.mentalWL is 0:
             self.changeGoal = self.S.Task('changeGoal', length = 50 )
-        if self.mentalWL is 2:
+        if self.mentalWL is 1:
             self.changeGoal = self.S.Task('changeGoal', length = 80 )
-        if self.mentalWL is 3:
-            self.changeGoal = self.S.Task('changeGoal', length = 110 )
         self.moveAttention1 = self.S.Task('moveAttention', length = 50 )
         
         self.S += (self.requestMeaningSound < self.meaningSound, self.meaningSound <= self.changeGoal,
@@ -387,8 +387,8 @@ class situation(object):
              self.saccade11 += self.Eyes
              self.encodeVisObject11 += self.Visual
              self.press += self.Hand
-             if self.mentalWL > 1:
-                 self.moveAttention7 = self.S.Task('moveAttention7', length = 400)#400
+             if self.mentalWL:
+                 self.moveAttention7 = self.S.Task('moveAttention7', length = 0)#400
                  self.S += self.moveAttention7 <= self.eyeMovePrep11, self.handsIni <= self.moveAttention7
                  self.moveAttention7 += self.Procedural
                  
