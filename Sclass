@@ -1,3 +1,4 @@
+
 import math
 from scipy.stats import gamma
 
@@ -93,6 +94,7 @@ class situation(object):
         saccade1 += self.Eyes
         self.encodeVisObject1 += self.Visual
         
+        '''
      def turnSA(self): 
          if self.perceivedUrgent:
              self.moveAttention3 = self.S.Task('moveAttention3', length = 50 )
@@ -191,7 +193,7 @@ class situation(object):
                      self.eyeMovePrep34 += self.Eyes
                      self.saccade34 += self.Eyes
                      self.encodeVisObject34 += self.Visual
-         
+                     '''         
 #unterschied SA und turnSA:
 #in SA he still needs to turn head (which is done by function gazeOnRoad) - in both he then builds up SA. 
 
@@ -215,41 +217,17 @@ class situation(object):
          self.eyeMovePrep1 = self.S.Task('eyeMovePrep1', length = 135 )
          saccade1 = self.S.Task('saccade1', length = 80 )
          encodeVisObject1 = self.S.Task('encodeVisObject1', length = 85 )
-         if self.perceivedUrgent:
-             self.moveAttention3 = self.S.Task('moveAttention3', length = 50 )
-             moveAttention4 = self.S.Task('moveAttention4', length = 50 )
-         else:
-             self.moveAttention3 = self.S.Task('moveAttention3', length = 100 )
-             moveAttention4 = self.S.Task('moveAttention4', length = 100 )
-         eyeMovePrep2 = self.S.Task('eyeMovePrep2', length = 135 )
-         saccade2 = self.S.Task('saccade2', length = 80 )
-         encodeVisObject2 = self.S.Task('encodeVisObject2', length = 85 )
-         
-         eyeMovePrep3 = self.S.Task('eyeMovePrep3', length = 135 )
-         saccade3 = self.S.Task('saccade3', length = 80 )
-         self.encodeVisObject3 = self.S.Task('encodeVisObject3', length = 85 )
          #order
          self.S += (self.moveAttention2 <= self.eyeMovePrep1,
          self.eyeMovePrep1 <= saccade1, saccade1 <= encodeVisObject1,
          self.eyeMovePrep1 < self.moveAttention3,
-         self.moveAttention1 < self.moveAttention2, self.moveAttention2 < self.moveAttention3, 
-         self.moveAttention3 <= eyeMovePrep2,
-         eyeMovePrep2 <= saccade2, saccade2 <= encodeVisObject2,
-         eyeMovePrep2 < self.moveAttention4,
-         self.moveAttention3 < moveAttention4, moveAttention4 <= eyeMovePrep3,
-         eyeMovePrep3 <= saccade3, saccade3 <= self.encodeVisObject3)
+         self.moveAttention1 < self.moveAttention2, self.moveAttention2 < self.moveAttention3)
          #resources for tasks
          self.moveAttention2 += self.Procedural
          self.eyeMovePrep1 += self.Eyes
          saccade1 += self.Eyes
          encodeVisObject1 += self.Visual
          self.moveAttention3 += self.Procedural
-         eyeMovePrep2 += self.Eyes
-         saccade2 += self.Eyes
-         encodeVisObject2 += self.Visual
-         moveAttention4 += self.Procedural
-         eyeMovePrep3 += self.Eyes
-         saccade3 += self.Eyes
          self.encodeVisObject3 += self.Visual
          
      def hands2wheel(self):  
@@ -503,5 +481,4 @@ class situation(object):
              if hasattr(self, 'requUnoccupyHands'):
                  self.S += self.moveAttention4 < self.requUnoccupyHands      
              
-         
          
