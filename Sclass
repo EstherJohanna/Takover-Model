@@ -1,6 +1,5 @@
 
 
-         
 import math
 from scipy.stats import gamma
 
@@ -47,8 +46,8 @@ class situation(object):
         self.meaningSound = self.S.Task('meaningSound', length = 100 )
         if self.mentalWL is 0:
             self.changeGoal = self.S.Task('changeGoal', length = 50 )
-        if self.mentalWL is 1:
-            self.changeGoal = self.S.Task('changeGoal', length = 80 )
+        #if self.mentalWL is 1:
+        #    self.changeGoal = self.S.Task('changeGoal', length = 80 )
         self.moveAttention1 = self.S.Task('moveAttention', length = 50 )
         
         self.S += (self.requestMeaningSound < self.meaningSound, self.meaningSound <= self.changeGoal,
@@ -263,11 +262,11 @@ class situation(object):
          if self.dangerous:
              self.drop = self.S.Task('drop', length = int(100*math.log(((60/20)+0.5),2)))#Fitt's law
          else:
-             self.drop = self.S.Task('drop', length = int(100*math.log(((60/5)+0.5),2)+300))#Fitt's law
+             self.drop = self.S.Task('drop', length = int(100*math.log(((60/5)+0.5),2)+600))#Fitt's law plus zurechtruecken danach
          self.eyeMovePrep4 = self.S.Task('eyeMovePrep4', length = 135 )
-         self.saccade4 = self.S.Task('saccade4', length = 80 )
+         self.saccade4 = self.S.Task('saccade4', length = 50 )
          self.eyeMovePrep5 = self.S.Task('eyeMovePrep5', length = 135 )
-         self.saccade5 = self.S.Task('saccade5', length = 80 )
+         self.saccade5 = self.S.Task('saccade5', length = 50 )
          self.encodeVisObject4 = self.S.Task('encodeVisObject4', length = 85 )
          self.encodeVisObject5 = self.S.Task('encodeVisObject5', length = 85 )
          #order
@@ -388,7 +387,7 @@ class situation(object):
              self.encodeVisObject11 += self.Visual
              self.press += self.Hand
              if self.mentalWL:
-                 self.moveAttention7 = self.S.Task('moveAttention7', length = 0)#400
+                 self.moveAttention7 = self.S.Task('moveAttention7', length = 400)#400
                  self.S += self.moveAttention7 <= self.eyeMovePrep11, self.handsIni <= self.moveAttention7
                  self.moveAttention7 += self.Procedural
                  
@@ -462,6 +461,8 @@ class situation(object):
                  self.S += self.thoraxTurn < self.encodeVisObject1
          if hasattr(self, 'moveAttention2'):
             self.S += self.moveAttention2 < self.checkNear
+            if hasattr(self, 'requHands2Wheel'):
+                self.S += self.requHands2Wheel < self.moveAttention2
          if hasattr(self, 'encodeVisObject3'):   
             self.S += self.encodeVisObject3 < self.checkNear
             if hasattr(self, 'requUnoccupyHands'):
