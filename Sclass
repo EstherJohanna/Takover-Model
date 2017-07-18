@@ -1,5 +1,3 @@
-
-
 import math
 from scipy.stats import gamma
 
@@ -44,8 +42,8 @@ class situation(object):
         self.attendAural = self.S.Task('attendAural', length = 50 )
         self.requestMeaningSound = self.S.Task('requestMeaningSound', length = 50 )
         self.meaningSound = self.S.Task('meaningSound', length = 100 )
-        if self.mentalWL is 0:
-            self.changeGoal = self.S.Task('changeGoal', length = 50 )
+        #if self.mentalWL is 0:
+        self.changeGoal = self.S.Task('changeGoal', length = 50 )
         #if self.mentalWL is 1:
         #    self.changeGoal = self.S.Task('changeGoal', length = 80 )
         self.moveAttention1 = self.S.Task('moveAttention', length = 50 )
@@ -74,7 +72,10 @@ class situation(object):
          #tasks
         motorPrepHead1 = self.S.Task('motorPrepHead1', length = 250 )
         motorInitHead1 = self.S.Task('motorInitHead1', length = 50 )
-        self.moveHead1 = self.S.Task('moveHead1', length = 600 )
+        if self.dangerous:
+            self.moveHead1 = self.S.Task('moveHead1', length = 300 )
+        else:
+            self.moveHead1 = self.S.Task('moveHead1', length = 600 )
         self.moveAttention2 = self.S.Task('moveAttention2', length = 50 )
         self.eyeMovePrep1 = self.S.Task('eyeMovePrep1', length = 135 )
         saccade1 = self.S.Task('saccade1', length = 80 )
@@ -253,12 +254,16 @@ class situation(object):
              self.requUnoccupyHands = self.S.Task('requUnoccupyHands', length = 50 )
              self.moveAttention5 = self.S.Task('moveAttention5', length = 50 )
              self.moveAttention6 = self.S.Task('moveAttention6', length = 50 )
+             self.head2CoSeat = self.S.Task('head2CoSeat', length = 300 )
+             self.head2road = self.S.Task('head2road', length = 300 )
          else:
              self.requUnoccupyHands = self.S.Task('requUnoccupyHands', length = 50 )
              self.moveAttention5 = self.S.Task('moveAttention5', length = 100 )
              self.moveAttention6 = self.S.Task('moveAttention6', length = 100 )
-         self.head2CoSeat = self.S.Task('head2CoSeat', length = 600 )
-         self.head2road = self.S.Task('head2road', length = 600 )
+             self.head2CoSeat = self.S.Task('head2CoSeat', length = 600 )
+             self.head2road = self.S.Task('head2road', length = 600 )
+         
+         
          if self.dangerous:
              self.drop = self.S.Task('drop', length = int(100*math.log(((60/20)+0.5),2)))#Fitt's law
          else:
@@ -392,16 +397,35 @@ class situation(object):
                  self.moveAttention7 += self.Procedural
                  
          if self.dangerous:
-             self.saccadeBack = self.S.Task('saccadeBack', length = 80 )
-             self.saccadeSide = self.S.Task('saccadeSide', length = 80 )
-             self.saccadeRoad = self.S.Task('saccadeRoad', length = 80 )
+             self.saccadeBack = self.S.Task('saccadeBack', length = 50 )
+             self.saccadeSide = self.S.Task('saccadeSide', length = 50 )
+             self.saccadeRoad = self.S.Task('saccadeRoad', length = 50 )
              self.requSourr = self.S.Task('requSourr', length = 50 )
-             self.checkBack = self.S.Task('checkBack', length = 50 )
-             self.checkSide = self.S.Task('checkSide', length = 50 )
-             self.attendRoad2 = self.S.Task('attendRoad2', length = 50 )
-             self.headBack = self.S.Task('headBack', length = 580 )
-             self.headSide = self.S.Task('headSide', length = 710 )
-             self.headRoad = self.S.Task('headRoad', length = 580 )
+             if self.mentalWL:
+                 self.checkSide = self.S.Task('checkSide', length = 400 )
+                 self.checkBack = self.S.Task('checkBack', length = 400 )
+                 self.attendRoad2 = self.S.Task('attendRoad2', length = 400 )
+             else:
+                 self.checkBack = self.S.Task('checkBack', length = 50 )
+                 self.checkSide = self.S.Task('checkSide', length = 50 )
+                 self.attendRoad2 = self.S.Task('attendRoad2', length = 50 )
+             if self.traffic:
+                 self.eyeMovePrep8 = self.S.Task('eyeMovePrep8', length = 135 )
+                 self.eyeMovePrep9 = self.S.Task('eyeMovePrep9', length = 135 )
+                 self.eyeMovePrep10 = self.S.Task('eyeMovePrep10', length = 135 )
+                 self.saccadeBack2 = self.S.Task('saccadeBack2', length = 50 )
+                 self.saccadeSide2 = self.S.Task('saccadeSide2', length = 50 )
+                 self.saccadeRoad2 = self.S.Task('saccadeRoad2', length = 50 )
+                 self.encodeVisObject11 = self.S.Task('encodeVisObject11', length = 85 )
+                 self.encodeVisObject12 = self.S.Task('encodeVisObject12', length = 85 )
+                 self.encodeVisObject13 = self.S.Task('encodeVisObject13', length = 85 )
+                 self.S += (self.eyeMovePrep8 <= self.saccadeBack2, self.saccadeBack2 <= self.encodeVisObject11,
+                            self.eyeMovePrep9 <= self.saccadeSide2, self.saccadeSide2 <= self.encodeVisObject12,
+                            self.eyeMovePrep10 <= self.saccadeRoad2, self.saccadeRoad2 <= self.encodeVisObject13,
+                            self.encodeVisObject8 <= self.saccadeBack2, self.encodeVisObject9 <= self.saccadeSide2)
+             self.headBack = self.S.Task('headBack', length = 580 - 100 )
+             self.headSide = self.S.Task('headSide', length = 710 - 100 )
+             self.headRoad = self.S.Task('headRoad', length = 580 - 100 )
              self.back = self.S.Task('back', length = 200 )
              self.side = self.S.Task('side', length = 200 )
              self.encodeVisObject8 = self.S.Task('encodeVisObject8', length = 85 )
